@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=3.5">
+    <title>YTDOWN</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h2>Baixe seus vídeos e músicas</h2>
+
+        <input type="text" id="url" placeholder="Cole a URL do YouTube">
+        <br>
+        <button onclick="buscarQualidades()">Buscar Vídeo</button>
+
+        <form id="formulario-download" style="display:none; margin-top:20px;">
+            <input type="hidden" name="url" id="form_url">
+            <input type="hidden" name="combined" id="combined">
+
+            <label for="format_code">Qualidades disponíveis:</label><br>
+            <select name="format_code" id="format_code" required></select><br><br>
+
+            <label for="file_type">Formato desejado:</label><br>
+            <select name="file_type" id="file_type" required>
+                <option value="mp4">Vídeo (.mp4)</option>
+                <option value="mp3">Áudio (.mp3)</option>
+            </select><br><br>
+
+            <button type="submit">Baixar</button>
+        </form>
+
+        <p id="mensagem"></p>
+    </div>
+
+    <script>
+        async function buscarQualidades() {
+            const urlInput = document.getElementById("url");
+            const url = urlInput.value.trim();
+            if (!url) return alert("Informe a URL do vídeo.");
+
+            const res = await fetch("/get_formats", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ url: url })
+            });
+
+            const formatos = await res.json();
+            const select = document.getElementById("format_code");
+            select.innerHTML = "";
+
+            const mensagem = document.getElementById("mensagem");
+            mensagem.textContent = "";
+
+            if (formatos.error) {
+                mensagem.textContent = "Erro: " + formatos.error;
+                return;
+            }
+
+            formatos.forEach(f => {
+                const opt = document.createElement("option");
+                opt.value = f.code;
+                opt.textContent = f.desc;
+                opt.setAttribute("data-combined", f.combined);
+                select.appendChild(opt);
+            });
+
+            document.getElementById("form_url").value = url;
+            document.getElementById("formulario-download").style.display = "block";
+        }
+
+        document.getElementById("formulario-download").addEventListener("submit", async function (e) {
+            e.preventDefault();
+
+            const formatSelect = document.getElementById("format_code");
+            const selectedOption = formatSelect.options[formatSelect.selectedIndex];
+            const isCombined = selectedOption.getAttribute("data-combined");
+
+            const url = document.getElementById("form_url").value;
+            const formatCode = formatSelect.value;
+            const fileType = document.getElementById("file_type").value;
+
+            const formData = new FormData();
+            formData.append("url", url);
+            formData.append("format_code", formatCode);
+            formData.append("file_type", fileType);
+            formData.append("combined", isCombined);
+
+            const mensagem = document.getElementById("mensagem");
+            mensagem.textContent = "Baixando... Aguarde.";
+
+            try {
+                const response = await fetch("/download", {
+                    method: "POST",
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    const erro = await response.json();
+                    mensagem.textContent = erro.error || "Erro no download.";
+                    return;
+                }
+
+                const blob = await response.blob();
+                const filename = response.headers.get("Content-Disposition")
+                                    ?.split("filename=")[1]?.replace(/"/g, "") || "arquivo";
+
+                const link = document.createElement("a");
+                link.href = URL.createObjectURL(blob);
+                link.download = filename;
+                link.click();
+
+                mensagem.textContent = "Download concluído!";
+            } catch (err) {
+                console.error(err);
+                mensagem.textContent = "Erro ao processar o download.";
+            }
+        });
+    </script>
+</body>
+</html>

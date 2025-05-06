@@ -1,0 +1,61 @@
+body {
+    background: linear-gradient(135deg, #3a0ca3, #7209b7, #f72585, #4361ee, #4cc9f0);
+    background-size: 400% 400%;
+    animation: gradientAnimation 15s ease infinite;
+    color: #fff;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    overflow: hidden;
+    box-sizing: border-box;
+}
+
+@keyframes gradientAnimation {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+.container {
+    background-color: rgba(0, 0, 0, 0.7);
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
+    width: 100%;
+    max-width: 400px;
+    box-sizing: border-box;
+}
+
+input, select, button {
+    margin-top: 10px;
+    padding: 10px;
+    width: 100%;
+    font-size: 16px;
+    box-sizing: border-box;
+}
+
+#mensagem {
+    margin-top: 20px;
+    font-weight: bold;
+    color: #0f0;
+}
+
+@media (max-width: 480px) {
+    .container {
+        padding: 20px;
+    }
+
+    h2 {
+        font-size: 1.5rem;
+    }
+}
