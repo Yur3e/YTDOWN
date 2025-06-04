@@ -4,7 +4,7 @@ Este é um projeto simples com Flask que estou refazendo com o objetivo de facil
 
 ![YTDOWN](https://github.com/user-attachments/assets/b15b8acf-177a-4ef3-98db-bbd5acf54ed5)
 
-## 🚀 Funcionalidades
+## Funcionalidades
 
 - Interface web para inserir o link do vídeo
 - Detecção de formatos
@@ -13,7 +13,7 @@ Este é um projeto simples com Flask que estou refazendo com o objetivo de facil
 - Qualidades disponíveis de (144p até 2160p)
 
 
-## 🤖 Tecnologias utilizadas 🤖
+## Recnologias utilizadas
 
 - Python
 - Flask
@@ -21,8 +21,6 @@ Este é um projeto simples com Flask que estou refazendo com o objetivo de facil
 - HTML/CSS
 - Regex, subprocess, glob
 
-
-## Instalação
 
 ### Requisitos
 
